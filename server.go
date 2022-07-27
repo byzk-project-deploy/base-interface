@@ -4,3 +4,9 @@ package rpcinterfaces
 type DeployApplicationPluginRPCServer struct {
 	Impl DeployApplicationPluginInterface
 }
+
+// Info 方法具体实现
+func (d *DeployApplicationPluginRPCServer) Info(args interface{}, resp *PluginInfo) error {
+	resp = d.Impl.Info()
+	return nil
+}

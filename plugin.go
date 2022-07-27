@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
+	"net"
 	"net/rpc"
 	"os"
 )
@@ -44,11 +45,21 @@ func PluginServe(fn PluginServeCallback) {
 		"PluginName": p,
 	}
 
+	c := make(chan *plugin.ReattachConfig, 2)
+	c <- &plugin.ReattachConfig{
+		Protocol:        plugin.ProtocolNetRPC,
+		ProtocolVersion: 1,
+		Addr:            &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8081},
+	}
+
 	plugin.Serve(&plugin.ServeConfig{
 		HandshakeConfig: *config,
 		Plugins:         pluginMap,
 		TLSProvider: func() (*tls.Config, error) {
 			return tlsConfig, nil
+		},
+		Test: &plugin.ServeTestConfig{
+			ReattachConfigCh: c,
 		},
 	})
 }
