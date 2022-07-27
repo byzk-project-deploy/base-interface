@@ -9,7 +9,7 @@ type DeployApplicationPluginRPC struct {
 
 func (d *DeployApplicationPluginRPC) Info() *PluginInfo {
 	var resp *PluginInfo
-	err := d.client.Call("Plugin.Info", nil, &resp)
+	err := d.client.Call("Plugin.Info", new(interface{}), &resp)
 	if err != nil {
 		// You usually want your interfaces to return errors. If they don't,
 		// there isn't much other choice here.
