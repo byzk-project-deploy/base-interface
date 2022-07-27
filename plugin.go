@@ -58,8 +58,5 @@ func PluginServe(fn PluginServeCallback) {
 		TLSProvider: func() (*tls.Config, error) {
 			return tlsConfig, nil
 		},
-		Test: &plugin.ServeTestConfig{
-			ReattachConfigCh: c,
-		},
 	})
 }
