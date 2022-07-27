@@ -42,7 +42,7 @@ func PluginServe(fn PluginServeCallback) {
 	}
 
 	pluginMap := map[string]plugin.Plugin{
-		"PluginName": p,
+		PluginName: p,
 	}
 
 	c := make(chan *plugin.ReattachConfig, 2)
