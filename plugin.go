@@ -4,7 +4,6 @@ import (
 	"crypto/tls"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
-	"net"
 	"net/rpc"
 	"os"
 )
@@ -43,13 +42,6 @@ func PluginServe(fn PluginServeCallback) {
 
 	pluginMap := map[string]plugin.Plugin{
 		PluginName: p,
-	}
-
-	c := make(chan *plugin.ReattachConfig, 2)
-	c <- &plugin.ReattachConfig{
-		Protocol:        plugin.ProtocolNetRPC,
-		ProtocolVersion: 1,
-		Addr:            &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8081},
 	}
 
 	plugin.Serve(&plugin.ServeConfig{

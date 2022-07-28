@@ -7,12 +7,12 @@ type DeployApplicationPluginRPC struct {
 	client *rpc.Client
 }
 
-func (d *DeployApplicationPluginRPC) Info() *PluginInfo {
+func (d *DeployApplicationPluginRPC) Info() (*PluginInfo, error) {
 	var resp *PluginInfo
 	err := d.client.Call("Plugin.Info", new(interface{}), &resp)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return resp
+	return resp, nil
 }
