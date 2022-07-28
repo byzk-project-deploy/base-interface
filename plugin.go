@@ -4,27 +4,30 @@ import (
 	"crypto/tls"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
-	"net/rpc"
 	"os"
 )
 
-const PluginName = "BYPT_PLUGIN"
+const (
+	PluginNameInfo = "BYPT_PLUGIN_INFO"
+	PluginNameCmd  = "BYPT_PLUGIN_CMD"
+	PluginNameWeb  = "BYPT_PLUGIN_WEB"
+)
 
-// DeployApplicationPlugin 部署应用插件
-type DeployApplicationPlugin struct {
-	// Impl 插件具体实现
-	Impl DeployApplicationPluginInterface
+// PluginServeCallbackResult 插件监听回调结果
+type PluginServeCallbackResult struct {
+	// InfoPlugin 信息插件( 必传 )
+	InfoPlugin PluginInfoInterface
+	// CmdPlugin 命令行插件( 当信息插件内的插件类型包含cmd时生效 )
+	CmdPlugin PluginCmdInterface
+	// WebPlugin Web插件( 当信息插件内的插件类型包含web时生效 )
+	WebPlugin PluginCmdInterface
+	// HandshakeConfig 握手协议配置
+	HandshakeConfig *plugin.HandshakeConfig
+	// TLSProvider tls认证
+	TLSProvider func() (*tls.Config, error)
 }
 
-func (d *DeployApplicationPlugin) Server(broker *plugin.MuxBroker) (interface{}, error) {
-	return &DeployApplicationPluginRPCServer{Impl: d.Impl}, nil
-}
-
-func (d *DeployApplicationPlugin) Client(broker *plugin.MuxBroker, client *rpc.Client) (interface{}, error) {
-	return &DeployApplicationPluginRPC{client: client}, nil
-}
-
-type PluginServeCallback func(logger hclog.Logger) (plugin.Plugin, *plugin.HandshakeConfig, *tls.Config)
+type PluginServeCallback func(logger hclog.Logger) *PluginServeCallbackResult
 
 // PluginServe 插件监听
 func PluginServe(fn PluginServeCallback) {
@@ -34,21 +37,38 @@ func PluginServe(fn PluginServeCallback) {
 		JSONFormat: true,
 	})
 
-	p, config, tlsConfig := fn(logger)
-	if p == nil || config == nil {
-		logger.Error("缺失的参数配置")
+	res := fn(logger)
+	if res.InfoPlugin == nil {
+		logger.Error("缺失插件信息内容")
 		os.Exit(1)
 	}
 
+	pluginInfo, err := res.InfoPlugin.Info()
+	if err != nil {
+		logger.Error("获取插件中的插件信息失败: %s", err.Error())
+		os.Exit(2)
+	}
+
+	if res.HandshakeConfig == nil {
+		logger.Error("缺失握手协议信息")
+		os.Exit(9)
+	}
+
 	pluginMap := map[string]plugin.Plugin{
-		PluginName: p,
+		PluginNameInfo: &pluginInfoImpl{impl: res.InfoPlugin},
+	}
+
+	if pluginInfo.Type.Is(PluginTypeCmd) {
+
+	}
+
+	if pluginInfo.Type.Is(PluginTypeWeb) {
+
 	}
 
 	plugin.Serve(&plugin.ServeConfig{
-		HandshakeConfig: *config,
+		HandshakeConfig: *res.HandshakeConfig,
 		Plugins:         pluginMap,
-		TLSProvider: func() (*tls.Config, error) {
-			return tlsConfig, nil
-		},
+		TLSProvider:     res.TLSProvider,
 	})
 }

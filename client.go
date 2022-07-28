@@ -2,12 +2,12 @@ package rpcinterfaces
 
 import "net/rpc"
 
-// DeployApplicationPluginRPC 部署应用的插件RPC客户端
-type DeployApplicationPluginRPC struct {
+// PluginInfoRpc 部署应用的插件RPC客户端
+type PluginInfoRpc struct {
 	client *rpc.Client
 }
 
-func (d *DeployApplicationPluginRPC) Info() (*PluginInfo, error) {
+func (d *PluginInfoRpc) Info() (*PluginInfo, error) {
 	var resp *PluginInfo
 	err := d.client.Call("Plugin.Info", new(interface{}), &resp)
 	if err != nil {
@@ -17,7 +17,7 @@ func (d *DeployApplicationPluginRPC) Info() (*PluginInfo, error) {
 	return resp, nil
 }
 
-func (d *DeployApplicationPluginRPC) errHandle(err error) error {
+func (d *PluginInfoRpc) errHandle(err error) error {
 	if _, ok := err.(rpc.ServerError); ok {
 		return err
 	}
