@@ -2,7 +2,6 @@ package rpcinterfaces
 
 import (
 	"errors"
-	"fmt"
 	"net/rpc"
 	"time"
 )
@@ -20,7 +19,6 @@ func withTimeout(duration time.Duration, fn func() error) error {
 	ch := make(chan error, 1)
 	go func() {
 		ch <- fn()
-		fmt.Println("线程退出...")
 	}()
 
 	after := time.After(duration)
