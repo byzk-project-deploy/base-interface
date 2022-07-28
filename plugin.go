@@ -55,7 +55,7 @@ func PluginServe(fn PluginServeCallback) {
 	}
 
 	pluginMap := map[string]plugin.Plugin{
-		PluginNameInfo: &pluginInfoImpl{impl: res.InfoPlugin},
+		PluginNameInfo: &PluginInfoImpl{impl: res.InfoPlugin},
 	}
 
 	if pluginInfo.Type.Is(PluginTypeCmd) {

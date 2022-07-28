@@ -63,15 +63,15 @@ type PluginInfoInterface interface {
 	Info() (*PluginInfo, error)
 }
 
-type pluginInfoImpl struct {
+type PluginInfoImpl struct {
 	impl PluginInfoInterface
 }
 
-func (p *pluginInfoImpl) Server(broker *plugin.MuxBroker) (interface{}, error) {
+func (p *PluginInfoImpl) Server(broker *plugin.MuxBroker) (interface{}, error) {
 	return &pluginInfoRpcServer{impl: p.impl}, nil
 }
 
-func (p *pluginInfoImpl) Client(broker *plugin.MuxBroker, client *rpc.Client) (interface{}, error) {
+func (p *PluginInfoImpl) Client(broker *plugin.MuxBroker, client *rpc.Client) (interface{}, error) {
 	//TODO implement me
 	panic("implement me")
 }
