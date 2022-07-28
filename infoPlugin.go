@@ -80,10 +80,9 @@ type pluginInfoRpc struct {
 }
 
 func (p *pluginInfoRpc) Info() (resp *PluginInfo, err error) {
-	//return resp, withTimeout(5*time.Second, func() error {
-	//	return p.client.Call("Plugin.Info1", new(interface{}), &resp)
-	//})
-	return resp, p.client.Call("Plugin.Info1", new(interface{}), &resp)
+	return resp, withTimeout(5*time.Second, func() error {
+		return p.client.Call("Plugin.Info1", new(interface{}), &resp)
+	})
 }
 
 type pluginInfoRpcServer struct {
