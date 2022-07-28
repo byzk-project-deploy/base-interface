@@ -72,8 +72,7 @@ func (p *PluginInfoImpl) Server(broker *plugin.MuxBroker) (interface{}, error) {
 }
 
 func (p *PluginInfoImpl) Client(broker *plugin.MuxBroker, client *rpc.Client) (interface{}, error) {
-	//TODO implement me
-	panic("implement me")
+	return &pluginInfoRpc{client: client}, nil
 }
 
 type pluginInfoRpc struct {
