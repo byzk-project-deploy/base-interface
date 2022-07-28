@@ -8,5 +8,5 @@ type DeployApplicationPluginRPCServer struct {
 // Info 方法具体实现
 func (d *DeployApplicationPluginRPCServer) Info(args interface{}, resp **PluginInfo) (err error) {
 	*resp, err = d.Impl.Info()
-	return nil
+	return err
 }

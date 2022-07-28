@@ -17,11 +17,17 @@ type OsOrArch byte
 
 const (
 	OsOrArchAll OsOrArch = 0
-	OsLinux     OsOrArch = 1 << iota
+	// OsLinux Linux系统
+	OsLinux OsOrArch = 1 << iota
+	// OsDarwin Mac系统
 	OsDarwin
+	// ArchAmd64 amd64系统架构
 	ArchAmd64
+	// ArchArm arm系统架构
 	ArchArm
+	// ArchArm64 arm64系统架构
 	ArchArm64
+	// ArchMips64le Mips64le系统架构
 	ArchMips64le
 )
 
