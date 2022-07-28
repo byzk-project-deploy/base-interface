@@ -1,5 +1,7 @@
 package rpcinterfaces
 
+import "time"
+
 type PluginType byte
 
 func (p PluginType) Is(pluginType PluginType) bool {
@@ -33,10 +35,16 @@ const (
 
 // PluginInfo 插件
 type PluginInfo struct {
+	// Author 作者名称
+	Author string
 	// Name 插件名称
 	Name string
-	// Desc 插件描述
+	// ShortDesc 短描述，一般大于30字将被裁剪
+	ShortDesc string
+	// Desc 插件描述（支持Markdown）
 	Desc string
+	// CreateTime 创建时间
+	CreateTime time.Time
 	// Type 插件类别
 	Type PluginType
 	// AllowOsAndArch 允许的系统或者架构

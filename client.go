@@ -11,8 +11,15 @@ func (d *DeployApplicationPluginRPC) Info() (*PluginInfo, error) {
 	var resp *PluginInfo
 	err := d.client.Call("Plugin.Info", new(interface{}), &resp)
 	if err != nil {
-		return nil, err
+		return nil, d.errHandle(err)
 	}
 
 	return resp, nil
+}
+
+func (d *DeployApplicationPluginRPC) errHandle(err error) error {
+	if _, ok := err.(rpc.ServerError); ok {
+		return err
+	}
+	panic(err)
 }
