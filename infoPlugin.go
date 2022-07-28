@@ -79,6 +79,16 @@ type pluginInfoRpc struct {
 	client *rpc.Client
 }
 
+func (p *pluginInfoRpc) Info() (*PluginInfo, error) {
+	var resp *PluginInfo
+	return resp, p.client.Call("Plugin.Info", new(interface{}), &resp)
+}
+
 type pluginInfoRpcServer struct {
 	impl PluginInfoInterface
+}
+
+func (p pluginInfoRpcServer) Info(args interface{}, resp **PluginInfo) (err error) {
+	*resp, err = p.impl.Info()
+	return
 }
