@@ -13,6 +13,12 @@ const (
 	PluginNameWeb  = "BYPT_PLUGIN_WEB"
 )
 
+var DefaultHandshakeConfig = &plugin.HandshakeConfig{
+	ProtocolVersion:  1,
+	MagicCookieKey:   "BYPT",
+	MagicCookieValue: "BYPT_VERIFY",
+}
+
 // PluginServeCallbackResult 插件监听回调结果
 type PluginServeCallbackResult struct {
 	// InfoPlugin 信息插件( 必传 )
@@ -50,8 +56,7 @@ func PluginServe(fn PluginServeCallback) {
 	}
 
 	if res.HandshakeConfig == nil {
-		logger.Error("缺失握手协议信息")
-		os.Exit(9)
+		res.HandshakeConfig = DefaultHandshakeConfig
 	}
 
 	pluginMap := map[string]plugin.Plugin{
