@@ -21,6 +21,10 @@ const (
 
 type OsOrArch byte
 
+func (o OsOrArch) Is(os OsOrArch, arch OsOrArch) bool {
+	return o&os == os && o&arch == arch
+}
+
 const (
 	OsOrArchAll OsOrArch = 0
 	// OsLinux Linux系统
