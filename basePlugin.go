@@ -61,39 +61,50 @@ type PluginInfo struct {
 	NotAllowOsAndArch []OsOrArch
 }
 
-// PluginInfoInterface 插件信息接口
-type PluginInfoInterface interface {
-	// Info 插件信息
-	Info() (*PluginInfo, error)
+type PluginBaseImpl struct {
+	impl PluginBaseInterface
 }
 
-type PluginInfoImpl struct {
-	impl PluginInfoInterface
+func (p *PluginBaseImpl) Server(broker *plugin.MuxBroker) (interface{}, error) {
+	return &pluginBaseRpcServer{impl: p.impl}, nil
 }
 
-func (p *PluginInfoImpl) Server(broker *plugin.MuxBroker) (interface{}, error) {
-	return &pluginInfoRpcServer{impl: p.impl}, nil
+func (p *PluginBaseImpl) Client(broker *plugin.MuxBroker, client *rpc.Client) (interface{}, error) {
+	return &pluginBaseRpc{client: client}, nil
 }
 
-func (p *PluginInfoImpl) Client(broker *plugin.MuxBroker, client *rpc.Client) (interface{}, error) {
-	return &pluginInfoRpc{client: client}, nil
-}
-
-type pluginInfoRpc struct {
+type pluginBaseRpc struct {
 	client *rpc.Client
 }
 
-func (p *pluginInfoRpc) Info() (resp *PluginInfo, err error) {
+func (p *pluginBaseRpc) Start() error {
+	return p.client.Call("Plugin.Start", new(any), new(any))
+}
+
+func (p *pluginBaseRpc) Stop() {
+	_ = p.client.Call("Plugin.Stop", new(any), new(any))
+}
+
+func (p *pluginBaseRpc) Info() (resp *PluginInfo, err error) {
 	return resp, withTimeout(5*time.Second, func() error {
-		return p.client.Call("Plugin.Info", new(interface{}), &resp)
+		return p.client.Call("Plugin.Info", new(any), &resp)
 	})
 }
 
-type pluginInfoRpcServer struct {
-	impl PluginInfoInterface
+type pluginBaseRpcServer struct {
+	impl PluginBaseInterface
 }
 
-func (p pluginInfoRpcServer) Info(args interface{}, resp **PluginInfo) (err error) {
+func (p pluginBaseRpcServer) Info(args interface{}, resp **PluginInfo) (err error) {
 	*resp, err = p.impl.Info()
 	return
+}
+
+func (p pluginBaseRpcServer) Start(args any, resp *any) error {
+	return p.impl.Start()
+}
+
+func (p pluginBaseRpcServer) Stop(args any, resp *any) error {
+	p.impl.Stop()
+	return nil
 }
