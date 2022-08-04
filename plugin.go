@@ -35,6 +35,13 @@ type PluginServeCallbackResult struct {
 
 type PluginServeCallback func(logger hclog.Logger) *PluginServeCallbackResult
 
+type emptyPluginCmdImpl struct {
+}
+
+func (e emptyPluginCmdImpl) Commands() []*CmdInfo {
+	return nil
+}
+
 // PluginServe 插件监听
 func PluginServe(fn PluginServeCallback) {
 
@@ -68,10 +75,10 @@ func PluginServe(fn PluginServeCallback) {
 
 	if pluginInfo.Type.Is(PluginTypeCmd) {
 		if res.CmdPlugin == nil {
-			logger.Error("插件缺失接口内容")
-			os.Exit(2)
+			pluginMap[PluginNameCmd] = &PluginCmdImpl{impl: &emptyPluginCmdImpl{}}
+		} else {
+			pluginMap[PluginNameCmd] = &PluginCmdImpl{impl: res.CmdPlugin}
 		}
-		pluginMap[PluginNameCmd] = &PluginCmdImpl{impl: res.CmdPlugin}
 	}
 
 	if pluginInfo.Type.Is(PluginTypeWeb) {
