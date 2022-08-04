@@ -1,7 +1,7 @@
 package rpcinterfaces
 
 import (
-	"github.com/hashicorp/go-plugin"
+	"github.com/byzk-project-deploy/go-plugin"
 	"net/rpc"
 	"time"
 )

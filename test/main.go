@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	rpcinterfaces.TestWithInteractive(func(logger hclog.Logger) *rpcinterfaces.PluginServeCallbackResult {
+	rpcinterfaces.TestWithInteractive(func(logger hclog.Logger, rootCert string) *rpcinterfaces.PluginServeCallbackResult {
 		return &rpcinterfaces.PluginServeCallbackResult{
 			BasePlugin: &testPluginBaseImpl{
 				logger: logger,

@@ -3,8 +3,8 @@ package rpcinterfaces
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/byzk-project-deploy/go-plugin"
 	"github.com/byzk-project-deploy/grumble"
-	"github.com/hashicorp/go-plugin"
 	"net/rpc"
 )
 

@@ -3,11 +3,11 @@ package rpcinterfaces
 import (
 	"errors"
 	"fmt"
+	"github.com/byzk-project-deploy/go-plugin"
 	"github.com/byzk-project-deploy/grumble"
 	"github.com/fatih/color"
 	"github.com/gosuri/uitable"
 	"github.com/hashicorp/go-hclog"
-	"github.com/hashicorp/go-plugin"
 	"os"
 	"time"
 )
@@ -88,7 +88,7 @@ func TestWithInteractive(fn PluginServeCallback) {
 		JSONFormat: true,
 	})
 
-	res := fn(logger)
+	res := fn(logger, pluginTestRootCert)
 	if res.BasePlugin == nil {
 		logger.Error("缺失插件信息内容")
 		os.Exit(1)
