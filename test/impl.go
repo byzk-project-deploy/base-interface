@@ -52,6 +52,14 @@ func (t *testPluginCmdImpl) Commands() []*rpcinterfaces.CmdInfo {
 					Min:  1,
 				},
 			},
+			Flags: []*rpcinterfaces.CmdFlagInfo{
+				{
+					Short: "t",
+					Long:  "t1",
+					Type:  rpcinterfaces.DataTypeString,
+					Help:  "测试",
+				},
+			},
 			Completer: func(prefix string, args []string) []string {
 				if len(args) > 0 {
 					return nil

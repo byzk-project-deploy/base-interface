@@ -52,7 +52,7 @@ type CmdInfo struct {
 	// Sample: start [OPTIONS] CONTAINER [CONTAINER...]
 	Usage string
 	// Flags 命令行选项
-	Flags map[string]*CmdFlagInfo
+	Flags []*CmdFlagInfo
 	// Args 命令行参数
 	Args []*CmdArgInfo
 	// Run 运行命令
