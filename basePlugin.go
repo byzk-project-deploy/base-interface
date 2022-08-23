@@ -3,12 +3,16 @@ package rpcinterfaces
 import (
 	"github.com/byzk-project-deploy/go-plugin"
 	"net/rpc"
+	"sync"
 	"time"
 )
 
 type PluginType byte
 
-var blockingChan = make(chan struct{}, 1)
+var (
+	blockingMap = make(map[string]chan struct{})
+	blockerLock = &sync.Mutex{}
+)
 
 func (p PluginType) Is(pluginType PluginType) bool {
 	return p&pluginType == pluginType
@@ -105,7 +109,7 @@ type pluginBaseRpcServer struct {
 	impl PluginBaseInterface
 }
 
-func (p pluginBaseRpcServer) Info(args interface{}, resp **PluginInfo) (err error) {
+func (p pluginBaseRpcServer) Info(args any, resp **PluginInfo) (err error) {
 	*resp, err = p.impl.Info()
 	return
 }
@@ -119,12 +123,26 @@ func (p pluginBaseRpcServer) Stop(args any, resp *any) error {
 	return nil
 }
 
-func (p pluginBaseRpcServer) Blocking(args any, resp *any) error {
-	<-blockingChan
+func (p pluginBaseRpcServer) Blocking(args string, resp *any) error {
+	blockerLock.Lock()
+	ch, ok := blockingMap[args]
+	if !ok {
+		ch = make(chan struct{}, 1)
+		blockingMap[args] = ch
+	}
+	blockerLock.Unlock()
+	<-ch
 	return nil
 }
 
-func (p pluginBaseRpcServer) Revoke(args any, resp *any) error {
-	blockingChan <- struct{}{}
+func (p pluginBaseRpcServer) Revoke(args string, resp *any) error {
+	blockerLock.Lock()
+	defer blockerLock.Unlock()
+	if ch, ok := blockingMap[args]; !ok {
+		return nil
+	} else {
+		close(ch)
+		delete(blockingMap, args)
+	}
 	return nil
 }

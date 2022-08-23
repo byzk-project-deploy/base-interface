@@ -93,7 +93,7 @@ type PluginBaseInterface interface {
 
 type PluginBlocker interface {
 	// Blocking 阻塞
-	Blocking() error
+	Blocking(id string) error
 	// Revoke 恢复
-	Revoke() error
+	Revoke(id string) error
 }
