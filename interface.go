@@ -90,3 +90,10 @@ type PluginBaseInterface interface {
 	// Stop 停止插件
 	Stop()
 }
+
+type PluginBlocker interface {
+	// Blocking 阻塞
+	Blocking() error
+	// Revoke 恢复
+	Revoke() error
+}

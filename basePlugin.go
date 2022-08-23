@@ -8,6 +8,8 @@ import (
 
 type PluginType byte
 
+var blockingChan = make(chan struct{}, 1)
+
 func (p PluginType) Is(pluginType PluginType) bool {
 	return p&pluginType == pluginType
 }
@@ -91,6 +93,14 @@ func (p *pluginBaseRpc) Info() (resp *PluginInfo, err error) {
 	})
 }
 
+func (p *pluginBaseRpc) Blocking() error {
+	return p.client.Call("Plugin.Blocking", new(any), new(any))
+}
+
+func (p *pluginBaseRpc) Revoke() error {
+	return p.client.Call("Plugin.Revoke", new(any), new(any))
+}
+
 type pluginBaseRpcServer struct {
 	impl PluginBaseInterface
 }
@@ -106,5 +116,15 @@ func (p pluginBaseRpcServer) Start(args any, resp *any) error {
 
 func (p pluginBaseRpcServer) Stop(args any, resp *any) error {
 	p.impl.Stop()
+	return nil
+}
+
+func (p pluginBaseRpcServer) Blocking(args any, resp *any) error {
+	<-blockingChan
+	return nil
+}
+
+func (p pluginBaseRpcServer) Revoke(args any, resp *any) error {
+	blockingChan <- struct{}{}
 	return nil
 }
