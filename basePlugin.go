@@ -97,12 +97,12 @@ func (p *pluginBaseRpc) Info() (resp *PluginInfo, err error) {
 	})
 }
 
-func (p *pluginBaseRpc) Blocking() error {
-	return p.client.Call("Plugin.Blocking", new(any), new(any))
+func (p *pluginBaseRpc) Blocking(id string) error {
+	return p.client.Call("Plugin.Blocking", id, new(any))
 }
 
-func (p *pluginBaseRpc) Revoke() error {
-	return p.client.Call("Plugin.Revoke", new(any), new(any))
+func (p *pluginBaseRpc) Revoke(id string) error {
+	return p.client.Call("Plugin.Revoke", id, new(any))
 }
 
 type pluginBaseRpcServer struct {
