@@ -3,7 +3,7 @@ module github.com/byzk-project-deploy/base-interface
 go 1.18
 
 require (
-	github.com/byzk-project-deploy/go-plugin v0.0.0-20220804063707-b9a65653fc49
+	github.com/byzk-project-deploy/go-plugin v0.0.0-20220825064458-12ec6680e865
 	github.com/byzk-project-deploy/grumble v1.1.4-0.20220804013806-5f6dda51b769
 	github.com/fatih/color v1.10.0
 	github.com/gosuri/uitable v0.0.4
